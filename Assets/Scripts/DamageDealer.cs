@@ -5,17 +5,13 @@ using UnityEngine;
 public class DamageDealer : MonoBehaviour
 {
     
-    [SerializeField] int damageAmount;
+    [SerializeField] int damageAmount = 1;
 
-    void OnCollisionEnter(Collision other)
+    public int GetDamage(int damageAmount)
     {
-       DealDamage(other.gameObject);    
+        return damageAmount;
     }
-
-    void DealDamage(GameObject other)
-    {
-        gameObject.GetComponent<Health>();
         
-    }
+    
     
 }
