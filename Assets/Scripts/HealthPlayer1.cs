@@ -9,27 +9,36 @@ public class HealthPlayer1 : MonoBehaviour
     [SerializeField] ParticleSystem healParticleSystem;
     [SerializeField] AudioSource healAudioSource;
 
+    HPBoardP1 hPBoardP1;
+
     bool playerIsDead = false;
+
+    void Start()
+    {
+        hPBoardP1 = FindObjectOfType<HPBoardP1>();
+    }
 
     void OnCollisionEnter(Collision other) 
     {
         if (other.gameObject.tag == "Enemy")
         {
-            TakeDamage(damageAmount);
+            TakeDamage();
         }
          
-    }    
-    
-    
-    void TakeDamage(int damageAmount)
+    }
+
+    public void TakeDamage()
     {
         hitPoints -= damageAmount;
-
+        
         if(hitPoints <= 0)
         {
             Debug.Log("player dies");
             PlayerDies();
         }
+        hPBoardP1.Player1HPUpdate(hitPoints); // bug - the values dont reflect what is 
+                                                // in the serialized field. if hitPoints -= damageAmount
+                                                // is put in, player looses 2 per hit instead of 1 but text is
     }
 
     void PlayerDies()
@@ -80,6 +89,7 @@ public class HealthPlayer1 : MonoBehaviour
     void HealPlayer()
     {
         hitPoints = 3;
+        hPBoardP1.Player1HPUpdate(hitPoints);
         gameObject.GetComponent<MovePlayer1>().enabled = true; 
         //gameObject.GetComponent<SphereCollider>().isTrigger = false;
         playerIsDead = false;
