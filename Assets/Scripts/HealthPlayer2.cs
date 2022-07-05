@@ -9,7 +9,13 @@ public class HealthPlayer2 : MonoBehaviour
     [SerializeField] ParticleSystem healParticleSystem;
     [SerializeField] AudioSource healAudioSource;
 
+    Animator animator;
     bool playerIsDead = false;
+
+    void Start() 
+    {
+        animator = GetComponentInChildren<Animator>();
+    }
 
     void OnCollisionEnter(Collision other) 
     {
@@ -35,12 +41,28 @@ public class HealthPlayer2 : MonoBehaviour
     void PlayerDies()
     {
         gameObject.GetComponent<MovePlayer2>().enabled = false; 
+        
         playerIsDead = true;
+        StartDeathFX();
+        
+                      
         //gameObject.GetComponent<SphereCollider>().isTrigger = true;
         
         // death animation
         // death sfx
     }
+
+    void StartDeathFX()
+    {
+        if (playerIsDead == true)
+        {
+            animator.SetBool("isDying", true);
+            animator.SetBool("isMoving", false);
+        }
+        
+    }
+
+    
 
     void OnTriggerEnter(Collider other)
     {
@@ -83,6 +105,7 @@ public class HealthPlayer2 : MonoBehaviour
         gameObject.GetComponent<MovePlayer2>().enabled = true; 
         //gameObject.GetComponent<SphereCollider>().isTrigger = false;
         playerIsDead = false;
+        animator.SetBool("isDying", false);
     }
 
 

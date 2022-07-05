@@ -11,11 +11,14 @@ public class HealthPlayer1 : MonoBehaviour
 
     HPBoardP1 hPBoardP1;
 
+    Animator animator;
     bool playerIsDead = false;
 
     void Start()
     {
         hPBoardP1 = FindObjectOfType<HPBoardP1>();
+        animator = GetComponentInChildren<Animator>();
+
     }
 
     void OnCollisionEnter(Collision other) 
@@ -41,14 +44,27 @@ public class HealthPlayer1 : MonoBehaviour
                                                 // is put in, player looses 2 per hit instead of 1 but text is
     }
 
+    
+
     void PlayerDies()
     {
         gameObject.GetComponent<MovePlayer1>().enabled = false; 
         playerIsDead = true;
+        StartDeathFX();
         //gameObject.GetComponent<SphereCollider>().isTrigger = true;
         
         // death animation
         // death sfx
+    }
+
+    void StartDeathFX()
+    {
+        if (playerIsDead == true)
+        {
+            animator.SetBool("isDying", true);
+            animator.SetBool("isMoving", false);
+        }
+        
     }
 
     void OnTriggerEnter(Collider other)
@@ -93,6 +109,7 @@ public class HealthPlayer1 : MonoBehaviour
         gameObject.GetComponent<MovePlayer1>().enabled = true; 
         //gameObject.GetComponent<SphereCollider>().isTrigger = false;
         playerIsDead = false;
+        animator.SetBool("isDying", false);
     }
 
 
