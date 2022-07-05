@@ -45,6 +45,7 @@ public class MonsterMove : MonoBehaviour
         Move();
       }
     }
+    UpdateAnimator();
   }
 
   void Move()
@@ -68,5 +69,13 @@ public class MonsterMove : MonoBehaviour
     NavMeshAgent agent = GetComponent<NavMeshAgent>();
     agent.destination = closestPlayer.transform.position;
     MonsterMovingState = MonsterMovingStates.moving;
+  }
+  void UpdateAnimator()
+  {
+    Vector3 velocity = GetComponent<NavMeshAgent>().velocity;
+    Vector3 localVelocity = transform.InverseTransformDirection(velocity);
+    float speed = localVelocity.z;
+    GetComponentInChildren<Animator>().SetFloat("forwardSpeed", speed);
+
   }
 }
