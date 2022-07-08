@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class HealthPlayer2 : MonoBehaviour
 {
@@ -8,6 +9,9 @@ public class HealthPlayer2 : MonoBehaviour
     [SerializeField] int damageAmount = 1;
     [SerializeField] ParticleSystem healParticleSystem;
     [SerializeField] AudioSource healAudioSource;
+    [SerializeField] float forceSpeed = 30f;
+
+    Rigidbody myRigidbody;
 
     Animator animator;
     bool playerIsDead = false;
@@ -15,6 +19,7 @@ public class HealthPlayer2 : MonoBehaviour
     void Start() 
     {
         animator = GetComponentInChildren<Animator>();
+        myRigidbody = GetComponent<Rigidbody>();
     }
 
     void OnCollisionEnter(Collision other) 
@@ -22,6 +27,11 @@ public class HealthPlayer2 : MonoBehaviour
         if (other.gameObject.tag == "Enemy")
         {
             TakeDamage(damageAmount);
+            
+            Rigidbody enemyRigidBody = other.gameObject.GetComponent<Rigidbody>();
+            Vector3 direction = myRigidbody.transform.position - enemyRigidBody.transform.position;
+            myRigidbody.AddForce(direction.normalized * forceSpeed, ForceMode.Impulse);
+            
         }
          
     }    
@@ -37,7 +47,7 @@ public class HealthPlayer2 : MonoBehaviour
             PlayerDies();
         }
     }
-
+    
     void PlayerDies()
     {
         gameObject.GetComponent<MovePlayer2>().enabled = false; 
