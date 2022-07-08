@@ -8,7 +8,9 @@ public class HealthPlayer1 : MonoBehaviour
     [SerializeField] int damageAmount = 1;
     [SerializeField] ParticleSystem healParticleSystem;
     [SerializeField] AudioSource healAudioSource;
+    [SerializeField] float forceSpeed = 30f;
 
+    Rigidbody myRigidbody;
     HPBoardP1 hPBoardP1;
 
     Animator animator;
@@ -18,6 +20,7 @@ public class HealthPlayer1 : MonoBehaviour
     {
         hPBoardP1 = FindObjectOfType<HPBoardP1>();
         animator = GetComponentInChildren<Animator>();
+        myRigidbody = GetComponent<Rigidbody>();
 
     }
 
@@ -26,6 +29,10 @@ public class HealthPlayer1 : MonoBehaviour
         if (other.gameObject.tag == "Enemy")
         {
             TakeDamage();
+            
+            Rigidbody enemyRigidBody = other.gameObject.GetComponent<Rigidbody>();
+            Vector3 direction = myRigidbody.transform.position - enemyRigidBody.transform.position;
+            myRigidbody.AddForce(direction.normalized * forceSpeed, ForceMode.Impulse);
         }
          
     }
@@ -44,6 +51,7 @@ public class HealthPlayer1 : MonoBehaviour
                                                 // is put in, player looses 2 per hit instead of 1 but text is
     }
 
+    
     
 
     void PlayerDies()
