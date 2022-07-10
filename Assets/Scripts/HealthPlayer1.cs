@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class HealthPlayer1 : MonoBehaviour
 {
-    [SerializeField] int hitPoints = 3;
+    public int hitPoints = 3;
     [SerializeField] int damageAmount = 1;
+    [SerializeField] int healAmount = 3;
     [SerializeField] ParticleSystem healParticleSystem;
     [SerializeField] AudioSource healAudioSource;
     [SerializeField] float forceSpeed = 30f;
@@ -14,13 +16,18 @@ public class HealthPlayer1 : MonoBehaviour
     HPBoardP1 hPBoardP1;
 
     Animator animator;
+    [SerializeField] Timer timer;
     bool playerIsDead = false;
-
+    
     void Start()
     {
-        hPBoardP1 = FindObjectOfType<HPBoardP1>();
+        
         animator = GetComponentInChildren<Animator>();
         myRigidbody = GetComponent<Rigidbody>();
+        hPBoardP1 = FindObjectOfType<HPBoardP1>();
+        hPBoardP1.Player1HPUpdate(hitPoints);
+        timer = FindObjectOfType<Timer>();
+        
 
     }
 
@@ -39,30 +46,30 @@ public class HealthPlayer1 : MonoBehaviour
 
     public void TakeDamage()
     {
-        hitPoints -= damageAmount;
+        if (!playerIsDead)
+        {
+            hitPoints -= damageAmount;
+        }
         
         if(hitPoints <= 0)
         {
             Debug.Log("player dies");
             PlayerDies();
         }
-        hPBoardP1.Player1HPUpdate(hitPoints); // bug - the values dont reflect what is 
-                                                // in the serialized field. if hitPoints -= damageAmount
-                                                // is put in, player looses 2 per hit instead of 1 but text is
+        hPBoardP1.Player1HPUpdate(hitPoints); 
+        
     }
 
-    
-    
-
-    void PlayerDies()
+    public void PlayerDies()
     {
         gameObject.GetComponent<MovePlayer1>().enabled = false; 
         playerIsDead = true;
         StartDeathFX();
-        //gameObject.GetComponent<SphereCollider>().isTrigger = true;
+             
         
-        // death animation
         // death sfx
+        
+                
     }
 
     void StartDeathFX()
@@ -71,7 +78,9 @@ public class HealthPlayer1 : MonoBehaviour
         {
             animator.SetBool("isDying", true);
             animator.SetBool("isMoving", false);
+            timer.StopTimer();
         }
+        
         
     }
 
@@ -95,6 +104,7 @@ public class HealthPlayer1 : MonoBehaviour
         StopHealingAnimation();
         HealPlayer();
         
+        
     }
 
     void StartHealingAnimation()
@@ -110,15 +120,20 @@ public class HealthPlayer1 : MonoBehaviour
         healAudioSource.Stop();
     }
 
-    void HealPlayer()
+    public void HealPlayer()
     {
-        hitPoints = 3;
-        hPBoardP1.Player1HPUpdate(hitPoints);
+        if(playerIsDead)
+        {
+            hitPoints += healAmount;
+            hPBoardP1.Player1HPUpdate(hitPoints);
+        }
         gameObject.GetComponent<MovePlayer1>().enabled = true; 
-        //gameObject.GetComponent<SphereCollider>().isTrigger = false;
         playerIsDead = false;
         animator.SetBool("isDying", false);
+        timer.StartTimer();
     }
+
+    
 
 
 }

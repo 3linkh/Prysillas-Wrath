@@ -18,11 +18,11 @@ public class MovePlayer1 : MonoBehaviour
         myRigidBody = GetComponent<Rigidbody>();
         
         animator.SetBool("isMoving", false);
-            
         MovePlayer();
-        
+              
+          
     }
-
+    
     void MovePlayer()
     {
         float moveValue = playerMoveSpeed * Time.deltaTime;

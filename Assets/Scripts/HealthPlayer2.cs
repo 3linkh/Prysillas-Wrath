@@ -5,28 +5,36 @@ using UnityEngine.AI;
 
 public class HealthPlayer2 : MonoBehaviour
 {
-    [SerializeField] int hitPoints = 3;
+    public int hitPoints = 3;
     [SerializeField] int damageAmount = 1;
+    [SerializeField] int healAmount = 3;
+    
     [SerializeField] ParticleSystem healParticleSystem;
     [SerializeField] AudioSource healAudioSource;
     [SerializeField] float forceSpeed = 30f;
 
     Rigidbody myRigidbody;
+    HPBoardP2 hPBoardP2;
 
     Animator animator;
+
+    [SerializeField] Timer timer;
     bool playerIsDead = false;
 
     void Start() 
     {
         animator = GetComponentInChildren<Animator>();
         myRigidbody = GetComponent<Rigidbody>();
+        hPBoardP2 = FindObjectOfType<HPBoardP2>();
+        hPBoardP2.Player2HPUpdate(hitPoints);
+        timer = FindObjectOfType<Timer>();
     }
 
     void OnCollisionEnter(Collision other) 
     {
         if (other.gameObject.tag == "Enemy")
         {
-            TakeDamage(damageAmount);
+            TakeDamage();
             
             Rigidbody enemyRigidBody = other.gameObject.GetComponent<Rigidbody>();
             Vector3 direction = myRigidbody.transform.position - enemyRigidBody.transform.position;
@@ -37,29 +45,35 @@ public class HealthPlayer2 : MonoBehaviour
     }    
     
     
-    void TakeDamage(int damageAmount)
+    void TakeDamage()
     {
-        hitPoints -= damageAmount;
+        if (!playerIsDead)
+        {
+            hitPoints -= damageAmount;
+        }
 
         if(hitPoints <= 0)
         {
             Debug.Log("player dies");
             PlayerDies();
         }
+        hPBoardP2.Player2HPUpdate(hitPoints);
+        
+        
+
     }
     
     void PlayerDies()
     {
         gameObject.GetComponent<MovePlayer2>().enabled = false; 
-        
         playerIsDead = true;
         StartDeathFX();
-        
-                      
+            
         //gameObject.GetComponent<SphereCollider>().isTrigger = true;
         
         // death animation
         // death sfx
+        timer.StopTimer();
     }
 
     void StartDeathFX()
@@ -93,6 +107,7 @@ public class HealthPlayer2 : MonoBehaviour
         yield return new WaitForSeconds(3f);
         StopHealingAnimation();
         HealPlayer();
+        timer.StartTimer();
         
     }
 
@@ -111,11 +126,15 @@ public class HealthPlayer2 : MonoBehaviour
 
     void HealPlayer()
     {
-        hitPoints = 3;
+        if(playerIsDead)
+        {
+        hitPoints += healAmount;
+        hPBoardP2.Player2HPUpdate(hitPoints);
+        }
         gameObject.GetComponent<MovePlayer2>().enabled = true; 
-        //gameObject.GetComponent<SphereCollider>().isTrigger = false;
         playerIsDead = false;
         animator.SetBool("isDying", false);
+        timer.StartTimer();
     }
 
 
