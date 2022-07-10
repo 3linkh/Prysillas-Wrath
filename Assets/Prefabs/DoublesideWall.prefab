@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2801309528325093895}
   - component: {fileID: 6304054903735789343}
   - component: {fileID: 6822981496778965515}
+  - component: {fileID: 5882326233952251957}
   m_Layer: 0
   m_Name: DoublesideWall
   m_TagString: Untagged
@@ -64,6 +65,22 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 7.99226, y: 7.941121, z: 0.7191715}
   m_Center: {x: 11.910116, y: 7.1208415, z: 1.2946844}
+--- !u!208 &5882326233952251957
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4869013364242569863}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1001 &5986093327142037064
 PrefabInstance:
   m_ObjectHideFlags: 0
