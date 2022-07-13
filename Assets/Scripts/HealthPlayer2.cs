@@ -19,7 +19,8 @@ public class HealthPlayer2 : MonoBehaviour
     Animator animator;
 
     [SerializeField] Timer timer;
-    bool playerIsDead = false;
+    [SerializeField] P2HealingTimer p2healingTimer;
+    public bool playerTwoIsDead = false;
 
     void Start() 
     {
@@ -28,6 +29,7 @@ public class HealthPlayer2 : MonoBehaviour
         hPBoardP2 = FindObjectOfType<HPBoardP2>();
         hPBoardP2.Player2HPUpdate(hitPoints);
         timer = FindObjectOfType<Timer>();
+        p2healingTimer = FindObjectOfType<P2HealingTimer>();
     }
 
     void OnCollisionEnter(Collision other) 
@@ -47,7 +49,7 @@ public class HealthPlayer2 : MonoBehaviour
     
     void TakeDamage()
     {
-        if (!playerIsDead)
+        if (!playerTwoIsDead)
         {
             hitPoints -= damageAmount;
         }
@@ -66,7 +68,7 @@ public class HealthPlayer2 : MonoBehaviour
     void PlayerDies()
     {
         gameObject.GetComponent<MovePlayer2>().enabled = false; 
-        playerIsDead = true;
+        playerTwoIsDead = true;
         StartDeathFX();
             
         //gameObject.GetComponent<SphereCollider>().isTrigger = true;
@@ -78,10 +80,11 @@ public class HealthPlayer2 : MonoBehaviour
 
     void StartDeathFX()
     {
-        if (playerIsDead == true)
+        if (playerTwoIsDead == true)
         {
             animator.SetBool("isDying", true);
             animator.SetBool("isMoving", false);
+            timer.StopTimer();
         }
         
     }
@@ -90,7 +93,7 @@ public class HealthPlayer2 : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (playerIsDead && other.gameObject.tag == "Player")
+        if (playerTwoIsDead && other.gameObject.tag == "Player")
         {
             StartCoroutine("Healing");
         }
@@ -99,7 +102,11 @@ public class HealthPlayer2 : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        StopCoroutine("Healing");    
+        StopCoroutine("Healing");  
+        if(playerTwoIsDead)
+        {
+            p2healingTimer.ResetTimer();
+        }  
     }
     IEnumerator Healing()
     {
@@ -116,6 +123,9 @@ public class HealthPlayer2 : MonoBehaviour
         healParticleSystem.Play();
         healAudioSource.Play();
 
+        p2healingTimer.gameTime = 3f;
+        p2healingTimer.stopTimer = false;
+
     }
 
     void StopHealingAnimation()
@@ -126,13 +136,13 @@ public class HealthPlayer2 : MonoBehaviour
 
     void HealPlayer()
     {
-        if(playerIsDead)
+        if(playerTwoIsDead)
         {
         hitPoints += healAmount;
         hPBoardP2.Player2HPUpdate(hitPoints);
         }
         gameObject.GetComponent<MovePlayer2>().enabled = true; 
-        playerIsDead = false;
+        playerTwoIsDead = false;
         animator.SetBool("isDying", false);
         timer.StartTimer();
     }

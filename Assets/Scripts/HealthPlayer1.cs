@@ -11,13 +11,16 @@ public class HealthPlayer1 : MonoBehaviour
     [SerializeField] ParticleSystem healParticleSystem;
     [SerializeField] AudioSource healAudioSource;
     [SerializeField] float forceSpeed = 30f;
+    [SerializeField] HealthPlayer2 healthPlayer2;
+    [SerializeField] LevelManager mylevelManager;
 
     Rigidbody myRigidbody;
     HPBoardP1 hPBoardP1;
 
     Animator animator;
     [SerializeField] Timer timer;
-    bool playerIsDead = false;
+    [SerializeField] HealingTimer healingTimer;
+    public bool playerIsDead = false;
     
     void Start()
     {
@@ -27,8 +30,16 @@ public class HealthPlayer1 : MonoBehaviour
         hPBoardP1 = FindObjectOfType<HPBoardP1>();
         hPBoardP1.Player1HPUpdate(hitPoints);
         timer = FindObjectOfType<Timer>();
-        
+        healingTimer = FindObjectOfType<HealingTimer>();
 
+        healthPlayer2 = GetComponent<HealthPlayer2>();
+        mylevelManager = GetComponent<LevelManager>();
+
+    }
+    void Update()
+    {
+        EndGame();
+           
     }
 
     void OnCollisionEnter(Collision other) 
@@ -95,7 +106,11 @@ public class HealthPlayer1 : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        StopCoroutine("Healing");    
+        StopCoroutine("Healing");  
+        if(playerIsDead)
+        {
+            healingTimer.ResetTimer();
+        }
     }
     IEnumerator Healing()
     {
@@ -103,6 +118,7 @@ public class HealthPlayer1 : MonoBehaviour
         yield return new WaitForSeconds(3f);
         StopHealingAnimation();
         HealPlayer();
+        timer.StartTimer();
         
         
     }
@@ -111,6 +127,9 @@ public class HealthPlayer1 : MonoBehaviour
     {
         healParticleSystem.Play();
         healAudioSource.Play();
+        
+        healingTimer.gameTime = 3f;
+        healingTimer.stopTimer = false;
 
     }
 
@@ -118,6 +137,8 @@ public class HealthPlayer1 : MonoBehaviour
     {
         healParticleSystem.Stop();
         healAudioSource.Stop();
+         //- this might break it
+        
     }
 
     public void HealPlayer()
@@ -131,6 +152,14 @@ public class HealthPlayer1 : MonoBehaviour
         playerIsDead = false;
         animator.SetBool("isDying", false);
         timer.StartTimer();
+    }
+
+    public void EndGame()
+    {
+        if (playerIsDead && healthPlayer2.playerTwoIsDead)
+        {
+            mylevelManager.Invoke("LoadGameOver", 1f);
+        }
     }
 
     
