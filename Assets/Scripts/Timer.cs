@@ -8,8 +8,15 @@ public class Timer : MonoBehaviour
     // bug is that timer bounces back and forth
     public float timerValue;
     public bool increaseTime = true;
+    static Timer instance;
 
     //TMP_Text timeText;
+    
+    void Awake()
+    {
+        ManageSingleton();    
+    }
+    
     void Start()
     {
         //timeText = GetComponent<TMP_Text>();
@@ -20,6 +27,8 @@ public class Timer : MonoBehaviour
     void Update()
     {
         //UpdateTimer();
+          
+        
     }
 
     public void UpdateTimer()
@@ -41,6 +50,21 @@ public class Timer : MonoBehaviour
     {
         increaseTime = true;
         Debug.Log("Start Time");
+    }
+
+    void ManageSingleton()
+    {
+        if(instance != null)
+        {
+            gameObject.SetActive(false);
+            Destroy(gameObject);
+        }
+        else
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+
     }
 
 }
