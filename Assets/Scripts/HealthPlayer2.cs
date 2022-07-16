@@ -8,6 +8,7 @@ public class HealthPlayer2 : MonoBehaviour
     public int hitPoints = 3;
     [SerializeField] int damageAmount = 1;
     [SerializeField] int healAmount = 3;
+    [SerializeField] float healTime = 2f;
     
     [SerializeField] ParticleSystem healParticleSystem;
     [SerializeField] AudioSource healAudioSource;
@@ -70,6 +71,7 @@ public class HealthPlayer2 : MonoBehaviour
         gameObject.GetComponent<MovePlayer2>().enabled = false; 
         playerTwoIsDead = true;
         StartDeathFX();
+        gameObject.GetComponent<HealthStatus>().playerIsAlive = false;
             
         //gameObject.GetComponent<SphereCollider>().isTrigger = true;
         
@@ -111,7 +113,7 @@ public class HealthPlayer2 : MonoBehaviour
     IEnumerator Healing()
     {
         StartHealingAnimation();
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(healTime);
         StopHealingAnimation();
         HealPlayer();
         timer.StartTimer();
@@ -123,7 +125,7 @@ public class HealthPlayer2 : MonoBehaviour
         healParticleSystem.Play();
         healAudioSource.Play();
 
-        p2healingTimer.gameTime = 3f;
+        p2healingTimer.gameTime = healTime;
         p2healingTimer.stopTimer = false;
 
     }
@@ -143,6 +145,7 @@ public class HealthPlayer2 : MonoBehaviour
         }
         gameObject.GetComponent<MovePlayer2>().enabled = true; 
         playerTwoIsDead = false;
+        gameObject.GetComponent<HealthStatus>().playerIsAlive = true;
         animator.SetBool("isDying", false);
         timer.StartTimer();
     }

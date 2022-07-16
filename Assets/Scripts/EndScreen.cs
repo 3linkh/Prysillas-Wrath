@@ -14,7 +14,13 @@ public class EndScreen : MonoBehaviour
     }
     void Start()
     {
-        scoreText.text = "Time Alive: " + timer.timerValue;
+        float timerValue = timer.timerValue;
+        float minutes = Mathf.FloorToInt(timerValue / 60);
+        float seconds = Mathf.FloorToInt(timerValue % 60);
+        float milliseconds = Mathf.FloorToInt((timerValue % 1) *100);
+        
+        scoreText.text = "Time Alive: " +minutes.ToString() +":"
+        + seconds.ToString() + ":" + milliseconds.ToString();
     }
     
 }

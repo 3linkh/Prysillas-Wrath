@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public class MonsterMove : MonoBehaviour
 {
 
+
   public GameObject[] players;
   private enum MonsterMovingStates
   {
@@ -15,28 +16,34 @@ public class MonsterMove : MonoBehaviour
     stunned
   }
   private MonsterMovingStates MonsterMovingState = MonsterMovingStates.stopped;
-  public bool MonsterActive = false;
+  public bool MonsterActive = true;
+  public bool moveSpeedBoost = true;
+
+  NavMeshAgent myMonsterNavMeshAgent;
+
+  [SerializeField] float speedBoostMultiplier;
 
   // Start is called before the first frame update  
   void Start()
   {
+    myMonsterNavMeshAgent = GetComponent<NavMeshAgent>();
     if (players.Length == 0)
     {
       players = GameObject.FindGameObjectsWithTag("Player");
       Debug.Log(players.Length);
     }
-
-
+    MonsterActive = true;
 
   }
 
   // Update is called once per frame
   void Update()
   {
-    if (Input.GetKeyDown(KeyCode.M))
-    {
-      MonsterActive = !MonsterActive;
-    }
+    BoostAccelerationGradual();
+    // if (Input.GetKeyDown(KeyCode.M))
+    // {
+    //   MonsterActive = !MonsterActive;
+    // }
 
     if (MonsterActive)
     {
@@ -58,6 +65,11 @@ public class MonsterMove : MonoBehaviour
       Vector3 diff = player.transform.position - transform.position;
       float curDistance = diff.sqrMagnitude;
       Debug.Log(curDistance);
+      if (!player.GetComponent<HealthStatus>().playerIsAlive)
+      {
+        curDistance = Mathf.Infinity;
+      }
+      
 
       if (curDistance < closestDistance)
       {
@@ -77,5 +89,12 @@ public class MonsterMove : MonoBehaviour
     float speed = localVelocity.z;
     GetComponentInChildren<Animator>().SetFloat("forwardSpeed", speed);
 
+  }
+  void BoostAccelerationGradual()
+  {
+    if (moveSpeedBoost)
+    {
+      myMonsterNavMeshAgent.acceleration += Time.deltaTime * speedBoostMultiplier;
+    }
   }
 }
